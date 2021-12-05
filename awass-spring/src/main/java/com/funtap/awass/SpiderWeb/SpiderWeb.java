@@ -329,7 +329,7 @@ else
                 value = "a";
                 ListParam.add(name + "=" + value);
             }
-            if(name!="" && value != ""){
+            else if(name!="" && value != ""){
                 ListParam.add(name + "=" + value);
             }
         }
