@@ -47,6 +47,7 @@ public class SpiderWeb {
     }
 
     private void spider(String cookie, int depth, String web) throws IOException, URISyntaxException, InterruptedException {
+        List<String> a = new ArrayList<>();
         for (int i = 0; i < depth; i++) {
             int size = ListAllUrl.size();
             for (int j = 0; j < size; j++) {
@@ -62,8 +63,9 @@ public class SpiderWeb {
 
         System.out.println("================show result ===================");
         for (UrlOb x : ListAllUrl) {
-            System.out.println(x.getUrl());
+            a.add("\""+x.getUrl()+"\"");
         }
+        System.out.println(a);
     }
 
     private void getObjectByUrl(UrlOb Ob, String cookie, String web) throws InterruptedException, IOException, URISyntaxException {
