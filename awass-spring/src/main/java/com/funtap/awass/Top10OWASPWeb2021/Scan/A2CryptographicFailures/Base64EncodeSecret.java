@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Base64EncodeSecret {
-    public Base64EncodeSecret(){}
 
 
     public Boolean Check_Base64(String cookie ){

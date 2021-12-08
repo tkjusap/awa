@@ -13,9 +13,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SpiderWeb {
-    private List<Object> ListAllUrl = new ArrayList<Object>();
+    private List<UrlOb> ListAllUrl = new ArrayList<>();
 
-    public Object SpiderWeb(String web, String cookie, String User, String Pass, String linkLogin) throws IOException, URISyntaxException, InterruptedException {
+    public List<UrlOb> SpiderWeb(String web, String cookie, String User, String Pass, String linkLogin) throws IOException, URISyntaxException, InterruptedException {
 
 
         List<String> Listpaths = new ArrayList<String>();
@@ -23,9 +23,7 @@ public class SpiderWeb {
         String html = GetHtmlString(web, cookie);
         //check login
         login login = new login();
-        UrlOb Ob = new UrlOb();
-        //add domain
-        Ob.SetUrlOb(web, "GET", "null", 0, false);
+        UrlOb Ob = new UrlOb(web, "GET", null, 0, false);
         ListAllUrl.add(Ob);
         if (web != null && cookie == null && linkLogin == null && User == null && Pass == null) {
             System.out.println("==== start job 1 ====");
@@ -63,8 +61,8 @@ public class SpiderWeb {
         System.out.println("===========size " + ListAllUrl.size() + "=================");
 
         System.out.println("================show result ===================");
-        for (Object x : ListAllUrl) {
-            System.out.println(x);
+        for (UrlOb x : ListAllUrl) {
+            System.out.println(x.getUrl());
         }
     }
 
@@ -72,7 +70,7 @@ public class SpiderWeb {
 
         String url = "";
         String method = "";
-        String param = "";
+        String param = null;
         int depth = Ob.getDepth() + 1;
         String html = "";
         //get out key
@@ -85,7 +83,6 @@ public class SpiderWeb {
             List<String> ListUrl = getHref(html);
             var linkBase = new URI(Ob.getUrl());
             for (String urlNotVerify : ListUrl) {
-                UrlOb UrlObject = new UrlOb();
                 var linkHight2 = new URI(urlNotVerify);
                 url = String.valueOf(linkBase.resolve(linkHight2)).split("\\?")[0];
                 method = "GET";
@@ -95,19 +92,18 @@ public class SpiderWeb {
                     param = null;
                 }
 
-                UrlObject.SetUrlOb(url, method, param, depth, false);
+                UrlOb UrlObject = new UrlOb(url, method, param, depth, false);
                 if (CheckObject(UrlObject, web) && CheckDup(UrlObject, web)) {
                     ListAllUrl.add(UrlObject);
                 }
                 //add post method form
                 List<String> ListForm = GetForm(html);
                 for (String form : ListForm) {
-                    UrlObject = new UrlOb();
                     param = GetParamFrom(form);
                     method = GetMethodInForm(form);
                     linkHight2 = new URI(GetActionInForm(form));
                     url = String.valueOf(linkBase.resolve(linkHight2)).split("\\?")[0];
-                    UrlObject.SetUrlOb(url, method, param, depth, false);
+                    UrlObject = new UrlOb(url, method, param, depth, false);
                     if (CheckObject(UrlObject, web) && CheckDup(UrlObject, web)) {
                         ListAllUrl.add(UrlObject);
                     }
@@ -135,7 +131,7 @@ public class SpiderWeb {
             UrlOb xUrl = (UrlOb) ListAllUrl.get(i);
             if(xUrl.getUrl().equals(url)){
                 if(analysisParam(xUrl.getParam()).equals(analysisParam(param)))
-                return false;
+                    return false;
 
             }
         }
@@ -143,40 +139,40 @@ public class SpiderWeb {
     }
 
     public String analysisParam(String param) {
-       if(param!=null){
-           String fomatparam = "";
-           String folder = "";
-           List<String> ListParam = new ArrayList<String>();
-           Pattern folderRE = Pattern.compile(".*\\/");
-           Matcher folderTag = folderRE.matcher(param);
-           while (folderTag.find()) {
-               folder = folderTag.group(0);
-           }
-           fomatparam = fomatparam + folder;
-           param = param.replaceAll(folder, "");
-           ListParam = List.of(param.split("\\&"));
-           for (int i = 0; i < ListParam.size(); i++) {
-               String x = ListParam.get(i);
-               if (checkFile(x)) {
-                   String firstParam = x.split("\\.")[1];
-                   if (i != 0) {
-                       fomatparam = fomatparam + "&x." + firstParam;
-                   } else {
-                       fomatparam = fomatparam + "x." + firstParam;
-                   }
-               } else if (x.contains("=")) {
-                   String firstParam = x.split("=")[0];
-                   if (i != 0) {
-                       fomatparam = fomatparam + "&" + firstParam + "=y";
-                   } else {
-                       fomatparam = fomatparam + firstParam + "=y";
-                   }
-               }
-           }
-           return fomatparam;
-       }
-else
-    return "";
+        if(param!=null){
+            String fomatparam = "";
+            String folder = "";
+            List<String> ListParam = new ArrayList<String>();
+            Pattern folderRE = Pattern.compile(".*\\/");
+            Matcher folderTag = folderRE.matcher(param);
+            while (folderTag.find()) {
+                folder = folderTag.group(0);
+            }
+            fomatparam = fomatparam + folder;
+            param = param.replaceAll(folder, "");
+            ListParam = List.of(param.split("\\&"));
+            for (int i = 0; i < ListParam.size(); i++) {
+                String x = ListParam.get(i);
+                if (checkFile(x)) {
+                    String firstParam = x.split("\\.")[1];
+                    if (i != 0) {
+                        fomatparam = fomatparam + "&x." + firstParam;
+                    } else {
+                        fomatparam = fomatparam + "x." + firstParam;
+                    }
+                } else if (x.contains("=")) {
+                    String firstParam = x.split("=")[0];
+                    if (i != 0) {
+                        fomatparam = fomatparam + "&" + firstParam + "=y";
+                    } else {
+                        fomatparam = fomatparam + firstParam + "=y";
+                    }
+                }
+            }
+            return fomatparam;
+        }
+        else
+            return "";
     }
 
     private boolean checkFile(String param) {
@@ -187,6 +183,7 @@ else
                 || param.toLowerCase(Locale.ROOT).contains(".xml")
                 || param.toLowerCase(Locale.ROOT).contains(".gif")
                 || param.toLowerCase(Locale.ROOT).contains(".json")
+                || param.toLowerCase(Locale.ROOT).contains(".css")
         ) {
             return true;
         } else {
@@ -317,14 +314,14 @@ else
         while (inputTag.find()) {
             name = "";
             value = "";
-                Matcher nameTag = nameRe.matcher(inputTag.group(0));
-                Matcher valueTag = valueRE.matcher(inputTag.group(0));
-                while (nameTag.find()) {
-                    name = nameTag.group(1);
-                }
-                while (valueTag.find()) {
-                    value = valueTag.group(1);
-                }
+            Matcher nameTag = nameRe.matcher(inputTag.group(0));
+            Matcher valueTag = valueRE.matcher(inputTag.group(0));
+            while (nameTag.find()) {
+                name = nameTag.group(1);
+            }
+            while (valueTag.find()) {
+                value = valueTag.group(1);
+            }
             if (name!="" && value == "" ) {
                 value = "a";
                 ListParam.add(name + "=" + value);

@@ -13,22 +13,11 @@ import java.util.regex.Pattern;
 
 
 public class Insecure_Login_Forms {
-    private String cookie = "security_level=0; PHPSESSID=fa1qai1j7n0bft89ngunl14336";
-
-    public Insecure_Login_Forms() {
-    }
-
-    ;
-
-    public void setCookie(String cookie) {
-        this.cookie = cookie;
-    }
-
-    public boolean Insecure_Login_Forms(String url) throws IOException {
+    public boolean Insecure_Login_Forms(String url,String cookie) throws IOException {
         Map<String, String> ListFomr = new HashMap<String, String>();
-        String html = GetHtmlString(url);
+        String html = GetHtmlString(url,cookie );
+        if(html.length()>10){
         ListFomr = getForm(html);
-        System.out.println(ListFomr);
         //login
         int logincode = GetPostMethod(ListFomr, url);
         //test status login with bwapp ,this is signature of site when Successful login,change it
@@ -37,7 +26,7 @@ public class Insecure_Login_Forms {
             //System.out.println("this site Insecure Login Forms");
         } else {
             //System.out.println("this site is safe");
-        }
+        }}
         return false;
     }
 
@@ -99,7 +88,9 @@ public class Insecure_Login_Forms {
             }
 
         }
-        ListFomr.put(listparam.get(listparam.size() - 2), listparam.get(listparam.size() - 1));
+        if(listparam.size()>=2) {
+            ListFomr.put(listparam.get(listparam.size() - 2), listparam.get(listparam.size() - 1));
+        }
         return ListFomr;
     }
 
@@ -124,20 +115,35 @@ public class Insecure_Login_Forms {
         return response.code();
     }
 
-    public String GetHtmlString(String url) throws IOException {
+    public String GetHtmlString(String url,String cookie) throws IOException {
         String html = "";
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .followRedirects(false)
-                .build();
-        MediaType mediaType = MediaType.parse("text/plain");
-        RequestBody body = RequestBody.create(mediaType, "");
-        Request request = new Request.Builder()
-                .url(url)
-                .method("POST", body)
-                .addHeader("Cookie", cookie)
-                .build();
-        Response response = client.newCall(request).execute();
-        html = response.body().string();
-        return html;
+        if(cookie != null){
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .followRedirects(false)
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            RequestBody body = RequestBody.create(mediaType, "");
+            Request request = new Request.Builder()
+                    .url(url)
+                    .method("POST", body)
+                    .addHeader("Cookie", cookie)
+                    .build();
+            Response response = client.newCall(request).execute();
+            html = response.body().string();
+            return html;
+        }else{
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .followRedirects(false)
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            RequestBody body = RequestBody.create(mediaType, "");
+            Request request = new Request.Builder()
+                    .url(url)
+                    .method("POST", body)
+                    .build();
+            Response response = client.newCall(request).execute();
+            html = response.body().string();
+            return html;
+        }
     }
 }

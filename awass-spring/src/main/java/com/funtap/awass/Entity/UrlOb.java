@@ -16,13 +16,6 @@ public class UrlOb {
         this.depth = depth;
         this.scan = scan;
     }
-    public void  SetUrlOb(String url, String method, String param, int depth, boolean scan) {
-        this.url = url;
-        this.method = method;
-        this.param = param;
-        this.depth = depth;
-        this.scan = scan;
-    }
 
     public String getUrl() {
         return url;

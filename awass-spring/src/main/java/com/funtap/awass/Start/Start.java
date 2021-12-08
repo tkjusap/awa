@@ -1,6 +1,9 @@
 package com.funtap.awass.Start;
 
+import com.funtap.awass.Entity.UrlOb;
 import com.funtap.awass.SpiderWeb.SpiderWeb;
+import com.funtap.awass.Top10OWASPWeb2021.PayLoadSignature.A3Injection.SQLInjection;
+import com.funtap.awass.Top10OWASPWeb2021.Scan.CheckVuln.ScanVulns;
 
 import java.io.IOException;
 import java.net.URI;
@@ -43,10 +46,21 @@ public class Start {
             passwd = null;
         }
 
-        List<String> list_url = (List<String>) spi.SpiderWeb(url, cookie, uname, passwd, linklogin);
+        List<UrlOb> list_url = spi.SpiderWeb(url, cookie, uname, passwd, linklogin);
+
+
+//        ScanVulns scanv = new ScanVulns();
+//        SQLInjection sqli = new SQLInjection();
+//        for(UrlOb x : list_url){
+//            //scanv.ScanVulns(sqli.getArrPaySQLin(), sqli.getArrSigSQLin(), x);
+//            System.out.println(x.getUrl());
+//            scanv.ScanVulcheck(x,cookie);
+      //  }
 
 
         System.out.println("============End==============");
+
+        System.out.println("============End ok test==============");
     }
 }
 
