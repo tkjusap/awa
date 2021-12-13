@@ -3,17 +3,14 @@ package com.funtap.awass.Top10OWASPWeb2021.Scan.CheckVuln;
 import com.funtap.awass.Entity.UrlOb;
 import com.funtap.awass.Top10OWASPWeb2021.Scan.A1BrokenAccessControl.Directory_Traversal_Files;
 import com.funtap.awass.Top10OWASPWeb2021.Scan.A2CryptographicFailures.Base64EncodeSecret;
-import com.funtap.awass.Top10OWASPWeb2021.Scan.A2CryptographicFailures.Host_Header_Attack;
+import com.funtap.awass.Top10OWASPWeb2021.Scan.A1BrokenAccessControl.Host_Header_Attack;
 import com.funtap.awass.Top10OWASPWeb2021.Scan.A7IdentificationAndAuthenticationFailures.Administrative_Portals;
 import com.funtap.awass.Top10OWASPWeb2021.Scan.A7IdentificationAndAuthenticationFailures.Insecure_Login_Forms;
 import com.funtap.awass.Top10OWASPWeb2021.Scan.A7IdentificationAndAuthenticationFailures.Session_ID_in_URL;
 import okhttp3.*;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ScanVulns {
     public void ScanVulns(String[] payload, String[] signature, UrlOb urlobject) throws IOException {

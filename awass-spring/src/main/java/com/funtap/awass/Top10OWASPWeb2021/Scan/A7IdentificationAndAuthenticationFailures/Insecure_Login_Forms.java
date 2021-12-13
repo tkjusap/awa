@@ -59,7 +59,13 @@ public class Insecure_Login_Forms {
         boolean add = false;
         int index = 0;
         while (continues) {
-            String Indexhtml = (String) Listhtml.get(index);
+            String Indexhtml="";
+            try {
+                Indexhtml = (String) Listhtml.get(index);
+            }catch (Exception e){
+                System.out.println(Listhtml);
+                return ListFomr;
+            }
             user = "";
             pass = "";
             if ((Indexhtml.contains("<form") && Indexhtml.contains("login")) || add) {
