@@ -1,9 +1,7 @@
 package com.funtap.awass.Top10OWASPWeb2021.Scan.CheckVuln;
 
 import com.funtap.awass.Entity.UrlOb;
-import com.funtap.awass.Top10OWASPWeb2021.Scan.A1BrokenAccessControl.Directory_Traversal_Files;
 import com.funtap.awass.Top10OWASPWeb2021.Scan.A2CryptographicFailures.Base64EncodeSecret;
-import com.funtap.awass.Top10OWASPWeb2021.Scan.A1BrokenAccessControl.Host_Header_Attack;
 import com.funtap.awass.Top10OWASPWeb2021.Scan.A7IdentificationAndAuthenticationFailures.Administrative_Portals;
 import com.funtap.awass.Top10OWASPWeb2021.Scan.A7IdentificationAndAuthenticationFailures.Insecure_Login_Forms;
 import com.funtap.awass.Top10OWASPWeb2021.Scan.A7IdentificationAndAuthenticationFailures.Session_ID_in_URL;
