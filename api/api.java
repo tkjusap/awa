@@ -12,7 +12,9 @@ public class api {
     public void getapi(String url) throws IOException {
         entityAPI obApi = new entityAPI();
         obApi = analysicAPI (url);
+
         A1BrokenObjectLevelAuthorization a1 = new A1BrokenObjectLevelAuthorization();
+
         System.out.println(a1.scan(obApi));
     }
 
@@ -21,13 +23,13 @@ public class api {
         String reFolder = "[^?]*";
         entityAPI obApi = new entityAPI();
         String domain =getTaget(url,reDomain);
-        String reParam = "\\w*=[^&]*";
+        String reParam = "\\?[^\\s]*";
+        String Param ;
         String folder = "";
         if (url.contains("?")) {
-            List<String> listParam= new ArrayList<String>();
-            listParam = getListTaget(url,reParam);
+            Param = getTaget(url,reParam);
             folder = getListTaget(url.replaceAll(domain,""), reFolder).get(0);
-            obApi = new entityAPI(url,domain,folder,listParam);
+            obApi = new entityAPI(url,domain,folder,Param);
         }
         return obApi;
     }
