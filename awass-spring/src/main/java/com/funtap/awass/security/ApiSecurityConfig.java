@@ -1,0 +1,75 @@
+package com.funtap.awass.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableMBeanExport;
+import org.springframework.http.HttpMethod;
+import org.springframework.jmx.support.RegistrationPolicy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableWebSecurity
+@EnableMBeanExport(registration=RegistrationPolicy.IGNORE_EXISTING)
+public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
+	@Autowired
+	UserLoginServiceImpl userLoginServiceImpl;
+	@Autowired
+	PasswordEncoder passwordEncoder;
+
+	@Bean
+	public JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter() throws Exception {
+		JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter = new JwtAuthenticationTokenFilter();
+		jwtAuthenticationTokenFilter.setAuthenticationManager(authenticationManager());
+		return jwtAuthenticationTokenFilter;
+	}
+
+	@Bean
+	public RestAuthenticationEntryPoint restServicesEntryPoint() {
+		return new RestAuthenticationEntryPoint();
+	}
+
+	@Bean
+	public CustomAccessDeniedHandler customAccessDeniedHandler() {
+		return new CustomAccessDeniedHandler();
+	}
+
+	@Bean
+	@Override
+	protected AuthenticationManager authenticationManager() throws Exception {
+		return super.authenticationManager();
+	}
+
+	/**
+	 * Detail read file readme author:
+	 */
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		
+		http.cors().and().csrf().disable().httpBasic().authenticationEntryPoint(restServicesEntryPoint()).and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+				.antMatchers(HttpMethod.POST, "/login").permitAll()
+				.antMatchers(HttpMethod.GET, "/rabbit/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/rabbit/**").permitAll()
+				.antMatchers(HttpMethod.POST, "/create-user").permitAll()
+				.antMatchers(HttpMethod.POST, "/update-vul").permitAll()
+				.antMatchers(HttpMethod.GET, "/test").permitAll()
+				.antMatchers(HttpMethod.GET, "/test2").permitAll()
+				.antMatchers("/admin/**").hasAnyRole( "ADMIN")
+				.anyRequest().authenticated()
+				.and().addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+				.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());		
+	}
+
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userLoginServiceImpl).passwordEncoder(passwordEncoder);
+	}
+}

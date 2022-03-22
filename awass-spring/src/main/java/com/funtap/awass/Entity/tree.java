@@ -1,8 +1,5 @@
 package com.funtap.awass.Entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class tree {
   String father;
   String chill;
